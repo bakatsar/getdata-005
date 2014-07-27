@@ -1,0 +1,21 @@
+test <- read.csv("test/X_test.txt", header=FALSE, sep="")
+train <- read.csv("train/X_train.txt", header=FALSE, sep="")
+full <- rbind(test, train)
+label <- read.csv("features.txt", header=FALSE, sep="")
+fu <- function (x) {if(length(grep("mean",x))>0 | length(grep("std",x))>0) TRUE else FALSE}
+keepLabel <- sapply(mylabel, fu)
+t <- full[,keepLabel]
+test <- read.csv("test/y_test.txt", header=FALSE, sep="")
+train <- read.csv("train/y_train.txt", header=FALSE, sep="")
+y <- rbind(test, train)
+y$V1 <-factor(y$V1)
+lvl <- read.csv("activity_labels.txt", header=FALSE, sep="")
+levels(y$V1) <- lvl$V2
+test <- read.csv("test/subject_test.txt", header=FALSE, sep="")
+train <- read.csv("train/subject_train.txt", header=FALSE, sep="")
+sub <- rbind(test, train)
+names(sub) <- c("subjects")
+names(y) <- c("activities")
+all <- cbind(full, sub, y)
+l <-list(all$subjects, all$activities)
+rs <-aggregate(all, by=l, FUN=mean)
